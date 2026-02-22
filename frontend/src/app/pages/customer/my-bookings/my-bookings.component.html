@@ -1,0 +1,66 @@
+<div class="px-4 py-6 sm:px-0">
+      <h1 class="text-2xl font-bold text-gray-900 mb-6">My Bookings</h1>
+
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <div *ngIf="bookings.length === 0" class="text-center py-8">
+            <p class="text-gray-500">You haven't made any bookings yet.</p>
+          </div>
+
+          <div *ngIf="bookings.length > 0" class="space-y-4">
+            <div *ngFor="let booking of bookings" class="border rounded-lg p-4">
+              <div class="flex justify-between items-start">
+                <div class="flex-1">
+                  <div class="flex items-center justify-between mb-2">
+                    <h3 class="font-medium text-gray-900">{{ booking.route_name }}</h3>
+                    <span [class]="getStatusClass(booking.status!)" 
+                          class="px-2 py-1 text-xs font-semibold rounded-full">
+                      {{ booking.status }}
+                    </span>
+                  </div>
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                    <div>
+                      <p><strong>Route:</strong> {{ booking.origin }} → {{ booking.destination }}</p>
+                      <p><strong>Date:</strong> {{ booking.date | date }}</p>
+                      <p><strong>Departure:</strong> {{ booking.departure_time }}</p>
+                      <p><strong>Arrival:</strong> {{ booking.arrival_time }}</p>
+                    </div>
+                    <div>
+                      <p><strong>Passenger:</strong> {{ booking.passenger_name }}</p>
+                      <p><strong>Phone:</strong> {{ booking.passenger_phone }}</p>
+                      <p><strong>Seat:</strong> {{ booking.seat_number }}</p>
+                      <p><strong>Vehicle:</strong> {{ booking.vehicle_number }}</p>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-3 flex items-center justify-between">
+                    <div>
+                      <p class="text-sm text-gray-600">
+                        <strong>Booking Reference:</strong> {{ booking.booking_reference }}
+                      </p>
+                      <p class="text-sm text-gray-600">
+                        <strong>Driver:</strong> {{ booking.driver_name }}
+                      </p>
+                    </div>
+                    <div class="text-right">
+                      <p class="text-lg font-bold text-gray-900">KSh {{ booking.total_amount | number }}</p>
+                      <p class="text-xs text-gray-500">Booked on {{ booking.created_at | date:'short' }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div *ngIf="booking.status === 'confirmed'" class="mt-4 pt-4 border-t">
+                <button
+                  (click)="cancelBooking(booking.id!)"
+                  class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                >
+                  Cancel Booking
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,91 @@
+<div class="px-4 py-6 sm:px-0">
+      <h1 class="text-2xl font-bold text-gray-900 mb-6">My Shifts</h1>
+
+
+
+      <!-- Active Shift Section -->
+      <div *ngIf="activeShift" class="bg-yellow-50 border border-yellow-200 shadow rounded-lg p-6 mb-6">
+        <h2 class="text-lg font-medium text-yellow-800 mb-4">Active Shift</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-yellow-700">
+          <div>
+            <p><strong>Route:</strong> {{ activeShift.route_name }} ({{ activeShift.origin }} - {{ activeShift.destination }})</p>
+            <p><strong>Date:</strong> {{ activeShift.date | date }}</p>
+            <p><strong>Departure:</strong> {{ activeShift.departure_time }}</p>
+          </div>
+          <div>
+            <p><strong>Vehicle:</strong> {{ activeShift.vehicle_number }}</p>
+            <p><strong>Started At:</strong> {{ activeShift.start_time | date:'short' }}</p>
+          </div>
+        </div>
+        <div class="mt-6">
+          <button
+            (click)="endShift(activeShift.id)"
+            [disabled]="endingShift"
+            class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:opacity-50"
+          >
+            {{ endingShift ? 'Ending...' : 'End Shift' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Shift History -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <h2 class="text-lg font-medium text-gray-900 mb-4">Shift History</h2>
+          <div *ngIf="shiftHistory.length === 0" class="text-center py-8">
+            <p class="text-gray-500">No shift history available.</p>
+          </div>
+
+          <div *ngIf="shiftHistory.length > 0" class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Route
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Vehicle
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Start Time
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    End Time
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr *ngFor="let shift of shiftHistory">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {{ shift.route_name }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ shift.date | date }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ shift.vehicle_number }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ shift.start_time | date:'shortTime' }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ shift.end_time ? (shift.end_time | date:'shortTime') : 'N/A' }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span [class]="getStatusClass(shift.status)" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+                      {{ shift.status }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>

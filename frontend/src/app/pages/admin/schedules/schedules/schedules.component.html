@@ -1,0 +1,168 @@
+<div class="px-4 py-6 sm:px-0">
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Schedules Management</h1>
+        <button
+          (click)="showForm = !showForm"
+          class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+        >
+          {{ showForm ? 'Cancel' : 'Add Schedule' }}
+        </button>
+      </div>
+
+      <!-- Add/Edit Form -->
+      <div *ngIf="showForm" class="bg-white shadow rounded-lg p-6 mb-6">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">
+          {{ editingSchedule ? 'Edit Schedule' : 'Add New Schedule' }}
+        </h2>
+        <form [formGroup]="scheduleForm" (ngSubmit)="onSubmit()">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="route_id" class="block text-sm font-medium text-gray-700">Route</label>
+              <select
+                id="route_id"
+                formControlName="route_id"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              >
+                <option [ngValue]="null" disabled>Select a route</option>
+                <option *ngFor="let route of routes" [ngValue]="route.id">{{ route.name }}</option>
+              </select>
+            </div>
+            <div>
+              <label for="driver_id" class="block text-sm font-medium text-gray-700">Driver</label>
+              <select
+                id="driver_id"
+                formControlName="driver_id"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              >
+                <option [ngValue]="null" disabled>Select a driver</option>
+                <option *ngFor="let driver of drivers" [ngValue]="driver.id">{{ driver.name }}</option>
+              </select>
+            </div>
+            <div>
+              <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+              <input
+                type="date"
+                id="date"
+                formControlName="date"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label for="departure_time" class="block text-sm font-medium text-gray-700">Departure Time</label>
+              <input
+                type="time"
+                id="departure_time"
+                formControlName="departure_time"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label for="arrival_time" class="block text-sm font-medium text-gray-700">Arrival Time</label>
+              <input
+                type="time"
+                id="arrival_time"
+                formControlName="arrival_time"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label for="vehicle_number" class="block text-sm font-medium text-gray-700">Vehicle Number</label>
+              <input
+                type="text"
+                id="vehicle_number"
+                formControlName="vehicle_number"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="KAA 123B"
+              />
+            </div>
+          </div>
+          <div class="mt-6 flex justify-end space-x-3">
+            <button
+              type="button"
+              (click)="cancelEdit()"
+              class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              [disabled]="scheduleForm.invalid || loading"
+              class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md text-sm font-medium disabled:opacity-50"
+            >
+              {{ loading ? 'Saving...' : (editingSchedule ? 'Update' : 'Create') }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Schedules List -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Route
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Driver
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Time
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Vehicle
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Seats
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr *ngFor="let schedule of schedules">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {{ schedule.route_name }} ({{ schedule.origin }} - {{ schedule.destination }})
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ schedule.driver_name }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ schedule.date | date }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ schedule.departure_time }} - {{ schedule.arrival_time }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ schedule.vehicle_number }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ schedule.available_seats }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button
+                      (click)="editSchedule(schedule)"
+                      class="text-indigo-600 hover:text-indigo-900 mr-4"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      (click)="deleteSchedule(schedule.id!)"
+                      class="text-red-600 hover:text-red-900"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
