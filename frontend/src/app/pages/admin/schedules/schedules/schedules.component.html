@@ -23,7 +23,7 @@
                 formControlName="route_id"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
-                <option [ngValue]="null" disabled>Select a route</option>
+                <option [ngValue]="null">Select a route</option>
                 <option *ngFor="let route of routes" [ngValue]="route.id">{{ route.name }}</option>
               </select>
             </div>
