@@ -63,6 +63,19 @@ export class RoutesComponent implements OnInit {
               this.loading = false;
             },
           });
+      } else  {
+        this.routeService.createRoute(routeData).subscribe({
+          next: () => {
+            this.loading = false;
+            this.loadRoutes();
+            this.routeForm.reset();
+            this.showForm =false;
+          },
+          error: () => {
+            this.loading = false;
+            alert("Failed to create route")
+          }
+        })
       }
     }
   }
