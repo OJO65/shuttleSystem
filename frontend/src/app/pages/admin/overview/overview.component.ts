@@ -30,26 +30,51 @@ export class OverviewComponent implements OnInit {
   }
 
   loadStats() {
-    this.routeService.getRoutes().subscribe((routes) => {
-      this.stats.totalRoutes = routes.length;
+    // Routes
+    this.routeService.getRoutes().subscribe({
+      next: (routes) => {
+        this.stats.totalRoutes = routes?.length || 0;
+      },
+      error: () => {
+        this.stats.totalRoutes = 0;
+      }
     });
 
-    this.scheduleService.getSchedules().subscribe((schedules) => {
-      this.stats.totalSchedules = schedules.length;
+    // Schedules
+    this.scheduleService.getSchedules().subscribe({
+      next: (schedules) => {
+        this.stats.totalSchedules = schedules?.length || 0;
+      },
+      error: () => {
+        this.stats.totalSchedules = 0;
+      }
     });
 
-    this.bookingService.getBookings().subscribe((bookings) => {
-      this.stats.totalBookings = bookings.length;
-      this.stats.totalRevenue = bookings.reduce(
-        (sum, booking) => sum + (booking.total_amount || 0),
-        0
-      );
+    // Bookings + Revenue (SINGLE SOURCE OF TRUTH)
+    this.bookingService.getBookings().subscribe({
+      next: (bookings) => {
+        this.stats.totalBookings = bookings?.length || 0;
+
+        this.stats.totalRevenue = (bookings || []).reduce(
+          (sum, booking) => sum + Number(booking.total_amount || 0),
+          0
+        );
+      },
+      error: () => {
+        this.stats.totalBookings = 0;
+        this.stats.totalRevenue = 0;
+      }
     });
   }
 
   loadRecentBookings() {
-    this.bookingService.getBookings().subscribe((bookings) => {
-      this.recentBookings = bookings.slice(0, 10);
+    this.bookingService.getBookings().subscribe({
+      next: (bookings) => {
+        this.recentBookings = (bookings || []).slice(0, 10);
+      },
+      error: () => {
+        this.recentBookings = [];
+      }
     });
   }
 

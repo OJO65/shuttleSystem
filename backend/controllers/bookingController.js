@@ -108,11 +108,31 @@ const cancelBooking = async (req, res) => {
     }
 }
 
+const getRevenueStats = async (req, res) => {
+    try {
+        const [rows] = await pool.query(`
+            SELECT 
+                COUNT(*) AS totalBookings,
+                COALESCE(SUM(total_amount), 0) AS totalRevenue
+            FROM bookings
+            WHERE status IN ('confirmed', 'completed')
+        `);
+
+        res.json(rows[0]);
+    } catch (error) {
+        res.status(500).json({ 
+            message: "Failed to fetch revenue",
+            error: error.message 
+        });
+    }
+};
+
 module.exports = {
     createBooking,
     getBookings,
     getUserBookings,
     getBookedSeats,
+    getRevenueStats,
     getBooking,
     updateBookingStatus,
     cancelBooking
